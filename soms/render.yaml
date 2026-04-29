@@ -1,0 +1,23 @@
+# Render Blueprint — deploys the SOMS backend.
+# Setup MongoDB Atlas separately and paste the connection string into MONGO_URI.
+
+services:
+  - type: web
+    name: soms-api
+    env: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: MAX_FILE_SIZE_MB
+        value: "5"
+      - key: MONGO_URI
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
