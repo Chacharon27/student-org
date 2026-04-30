@@ -27,7 +27,7 @@ import { fileUrl } from '../../core/services/file-url';
     </div>
 
     <div *ngIf="showForm()" class="card p-4 sm:p-6 mb-6">
-      <form [formGroup]="form" (ngSubmit)="create()" class="grid md:grid-cols-2 gap-3 sm:gap-4">
+      <form [formGroup]="form" (ngSubmit)="save()" class="grid md:grid-cols-2 gap-3 sm:gap-4">
         <div class="md:col-span-2">
           <label class="label">Title</label>
           <input class="input" formControlName="title" />
@@ -60,12 +60,13 @@ import { fileUrl } from '../../core/services/file-url';
           <textarea class="input min-h-[100px]" formControlName="description"></textarea>
         </div>
         <div class="md:col-span-2">
-          <label class="label">Poster (optional)</label>
+          <label class="label">Poster {{ editingId() ? '(choose a new file to replace)' : '(optional)' }}</label>
           <input type="file" accept="image/*" (change)="onFile($event)" class="text-sm" />
         </div>
-        <div class="md:col-span-2 flex justify-end">
+        <div class="md:col-span-2 flex flex-wrap justify-end gap-2">
+          <button *ngIf="editingId()" type="button" class="btn-secondary" (click)="resetForm()">Cancel edit</button>
           <button class="btn-primary" [disabled]="form.invalid || creating()">
-            {{ creating() ? 'Saving...' : 'Create event' }}
+            {{ creating() ? 'Saving...' : (editingId() ? 'Update event' : 'Create event') }}
           </button>
         </div>
       </form>
@@ -90,7 +91,11 @@ import { fileUrl } from '../../core/services/file-url';
           </span>
         </div>
         <div class="p-4">
-          <h3 class="font-semibold text-slate-900 line-clamp-1">{{ e.title }}</h3>
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="font-semibold text-slate-900 line-clamp-1">{{ e.title }}</h3>
+            <button *ngIf="auth.user?.role === 'admin'" class="text-xs text-brand-700 hover:underline shrink-0"
+                    (click)="edit(e); $event.preventDefault(); $event.stopPropagation()">Edit</button>
+          </div>
           <p class="text-xs text-slate-500 mt-1">📍 {{ e.location }}</p>
           <p class="text-sm text-slate-600 mt-2 line-clamp-2">{{ e.description }}</p>
         </div>
@@ -122,6 +127,7 @@ export class EventsComponent implements OnInit {
   page = signal(1);
   showForm = signal(false);
   creating = signal(false);
+  editingId = signal<string | null>(null);
   file: File | null = null;
   private search$ = new Subject<string>();
 
@@ -166,7 +172,7 @@ export class EventsComponent implements OnInit {
     this.file = input.files?.[0] ?? null;
   }
 
-  create() {
+  save() {
     if (this.form.invalid) return;
     this.creating.set(true);
     const fd = new FormData();
@@ -174,16 +180,45 @@ export class EventsComponent implements OnInit {
       fd.append(k, String(v)),
     );
     if (this.file) fd.append('poster', this.file);
-    this.svc.create(fd).subscribe({
+    const id = this.editingId();
+    const request = id ? this.svc.update(id, fd) : this.svc.create(fd);
+    request.subscribe({
       next: () => {
-        this.toast.success('Event created');
-        this.form.reset({ capacity: 0 } as any);
-        this.file = null;
-        this.showForm.set(false);
+        this.toast.success(id ? 'Event updated' : 'Event created');
+        this.resetForm();
         this.load();
       },
       complete: () => this.creating.set(false),
       error: () => this.creating.set(false),
     });
+  }
+
+  edit(event: EventItem) {
+    this.editingId.set(event._id);
+    this.showForm.set(true);
+    this.file = null;
+    this.form.reset({
+      title: event.title,
+      description: event.description,
+      organization: typeof event.organization === 'string' ? event.organization : event.organization?._id ?? '',
+      startsAt: this.toLocalDateTime(event.startsAt),
+      endsAt: this.toLocalDateTime(event.endsAt),
+      location: event.location,
+      capacity: event.capacity ?? 0,
+    } as any);
+  }
+
+  resetForm() {
+    this.form.reset({ capacity: 0 } as any);
+    this.file = null;
+    this.editingId.set(null);
+    this.showForm.set(false);
+  }
+
+  private toLocalDateTime(value: string | Date): string {
+    const date = new Date(value);
+    const offset = date.getTimezoneOffset();
+    const local = new Date(date.getTime() - offset * 60000);
+    return local.toISOString().slice(0, 16);
   }
 }

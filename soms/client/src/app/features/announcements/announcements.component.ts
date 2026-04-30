@@ -25,7 +25,7 @@ import { fileUrl } from '../../core/services/file-url';
     </div>
 
     <div *ngIf="showForm()" class="card p-4 sm:p-6 mb-6">
-      <form [formGroup]="form" (ngSubmit)="create()" class="space-y-4">
+      <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
         <div>
           <label class="label">Title</label>
           <input class="input" formControlName="title" />
@@ -42,15 +42,16 @@ import { fileUrl } from '../../core/services/file-url';
           <textarea class="input min-h-[120px]" formControlName="body"></textarea>
         </div>
         <div>
-          <label class="label">Photo (optional)</label>
+          <label class="label">Photo {{ editingId() ? '(choose a new file to replace)' : '(optional)' }}</label>
           <input type="file" accept="image/*" (change)="onFile($event)" class="text-sm text-slate-700 file:mr-3 file:rounded-lg file:border file:border-slate-300 file:bg-white file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-900" />
         </div>
         <label class="flex items-center gap-2 text-sm">
           <input type="checkbox" formControlName="pinned" /> Pin to top
         </label>
-        <div class="flex justify-end">
+        <div class="flex flex-wrap justify-end gap-2">
+          <button *ngIf="editingId()" type="button" class="btn-secondary" (click)="resetForm()">Cancel edit</button>
           <button class="btn-primary" [disabled]="form.invalid || creating()">
-            {{ creating() ? 'Posting...' : 'Post announcement' }}
+            {{ creating() ? 'Saving...' : (editingId() ? 'Update announcement' : 'Post announcement') }}
           </button>
         </div>
       </form>
@@ -70,7 +71,10 @@ import { fileUrl } from '../../core/services/file-url';
             <p class="text-sm text-slate-600 whitespace-pre-line">{{ a.body }}</p>
             <p class="text-xs text-slate-400 mt-2">{{ a.createdAt | date:'medium' }}</p>
           </div>
-          <button *ngIf="auth.user?.role === 'admin'" class="text-xs text-red-600 hover:underline" (click)="remove(a._id)">Delete</button>
+          <div *ngIf="auth.user?.role === 'admin'" class="flex gap-3 text-xs">
+            <button class="text-brand-700 hover:underline" (click)="edit(a)">Edit</button>
+            <button class="text-red-600 hover:underline" (click)="remove(a._id)">Delete</button>
+          </div>
         </div>
       </li>
     </ul>
@@ -98,6 +102,7 @@ export class AnnouncementsComponent implements OnInit {
   page = signal(1);
   showForm = signal(false);
   creating = signal(false);
+  editingId = signal<string | null>(null);
   file: File | null = null;
 
   form = this.fb.nonNullable.group({
@@ -129,7 +134,7 @@ export class AnnouncementsComponent implements OnInit {
     });
   }
 
-  create() {
+  save() {
     if (this.form.invalid) return;
     this.creating.set(true);
     const v = this.form.getRawValue();
@@ -139,17 +144,39 @@ export class AnnouncementsComponent implements OnInit {
     fd.append('pinned', String(v.pinned));
     if (v.organization) fd.append('organization', v.organization);
     if (this.file) fd.append('photo', this.file);
-    this.svc.create(fd).subscribe({
+    const id = this.editingId();
+    const request = id ? this.svc.update(id, fd) : this.svc.create(fd);
+    request.subscribe({
       next: () => {
-        this.toast.success('Announcement posted');
-        this.form.reset({ pinned: false } as any);
-        this.file = null;
-        this.showForm.set(false);
+        this.toast.success(id ? 'Announcement updated' : 'Announcement posted');
+        this.resetForm();
         this.load();
       },
       complete: () => this.creating.set(false),
       error: () => this.creating.set(false),
     });
+  }
+
+  edit(announcement: Announcement) {
+    this.editingId.set(announcement._id);
+    this.showForm.set(true);
+    this.file = null;
+    this.form.reset({
+      title: announcement.title,
+      body: announcement.body,
+      organization:
+        typeof announcement.organization === 'string'
+          ? announcement.organization
+          : announcement.organization?._id ?? '',
+      pinned: announcement.pinned,
+    } as any);
+  }
+
+  resetForm() {
+    this.form.reset({ pinned: false } as any);
+    this.file = null;
+    this.editingId.set(null);
+    this.showForm.set(false);
   }
 
   remove(id: string) {

@@ -27,7 +27,7 @@ import { fileUrl } from '../../core/services/file-url';
     </div>
 
     <div *ngIf="showForm()" class="card p-4 sm:p-5 mb-5">
-      <form [formGroup]="form" (ngSubmit)="create()" class="grid md:grid-cols-2 gap-3">
+      <form [formGroup]="form" (ngSubmit)="save()" class="grid md:grid-cols-2 gap-3">
         <div>
           <label class="label">Name</label>
           <input class="input" formControlName="name" />
@@ -41,12 +41,13 @@ import { fileUrl } from '../../core/services/file-url';
           <textarea class="input min-h-[72px]" rows="3" formControlName="description"></textarea>
         </div>
         <div>
-          <label class="label">Logo (optional)</label>
+          <label class="label">Logo {{ editingId() ? '(choose a new file to replace)' : '(optional)' }}</label>
           <input type="file" accept="image/*" (change)="onFile($event)" class="text-sm text-slate-700 file:mr-3 file:rounded-lg file:border file:border-slate-300 file:bg-white file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-900" />
         </div>
-        <div class="flex items-end justify-stretch sm:justify-end">
+        <div class="flex flex-wrap items-end justify-stretch sm:justify-end gap-2">
+          <button *ngIf="editingId()" type="button" class="btn-secondary" (click)="resetForm()">Cancel edit</button>
           <button class="btn-primary" [disabled]="form.invalid || creating()">
-            {{ creating() ? 'Saving...' : 'Create' }}
+            {{ creating() ? 'Saving...' : (editingId() ? 'Update' : 'Create') }}
           </button>
         </div>
       </form>
@@ -68,7 +69,11 @@ import { fileUrl } from '../../core/services/file-url';
           </div>
         </ng-template>
         <div class="min-w-0">
-          <h3 class="font-semibold text-slate-900 truncate">{{ o.name }}</h3>
+          <div class="flex items-start justify-between gap-2">
+            <h3 class="font-semibold text-slate-900 truncate">{{ o.name }}</h3>
+            <button *ngIf="auth.user?.role === 'admin'" class="text-xs text-brand-700 hover:underline shrink-0"
+                    (click)="edit(o); $event.preventDefault(); $event.stopPropagation()">Edit</button>
+          </div>
           <p class="text-xs text-brand-700 font-medium">{{ o.category }}</p>
           <p class="text-sm text-slate-500 mt-1 line-clamp-2">{{ o.description }}</p>
         </div>
@@ -97,6 +102,7 @@ export class OrganizationsComponent implements OnInit {
   page = signal(1);
   showForm = signal(false);
   creating = signal(false);
+  editingId = signal<string | null>(null);
   file: File | null = null;
   private search$ = new Subject<string>();
 
@@ -140,7 +146,7 @@ export class OrganizationsComponent implements OnInit {
     this.file = input.files?.[0] ?? null;
   }
 
-  create() {
+  save() {
     if (this.form.invalid) return;
     this.creating.set(true);
     const fd = new FormData();
@@ -148,16 +154,34 @@ export class OrganizationsComponent implements OnInit {
       fd.append(k, String(v)),
     );
     if (this.file) fd.append('logo', this.file);
-    this.svc.create(fd).subscribe({
+    const id = this.editingId();
+    const request = id ? this.svc.update(id, fd) : this.svc.create(fd);
+    request.subscribe({
       next: () => {
-        this.toast.success('Organization created');
-        this.form.reset();
-        this.file = null;
-        this.showForm.set(false);
+        this.toast.success(id ? 'Organization updated' : 'Organization created');
+        this.resetForm();
         this.load();
       },
       complete: () => this.creating.set(false),
       error: () => this.creating.set(false),
     });
+  }
+
+  edit(org: Organization) {
+    this.editingId.set(org._id);
+    this.showForm.set(true);
+    this.file = null;
+    this.form.reset({
+      name: org.name,
+      category: org.category,
+      description: org.description,
+    });
+  }
+
+  resetForm() {
+    this.form.reset();
+    this.file = null;
+    this.editingId.set(null);
+    this.showForm.set(false);
   }
 }
