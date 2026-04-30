@@ -6,8 +6,8 @@ import { EventItem, Paginated, Registration } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class EventService {
-  private readonly api = environment.apiUrl + '/api/events';
-  private readonly regApi = environment.apiUrl + '/api/registrations';
+  private readonly api = environment.apiUrl + '/events';
+  private readonly regApi = environment.apiUrl + '/registrations';
 
   constructor(private http: HttpClient) {}
 

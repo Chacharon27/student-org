@@ -121,7 +121,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     forkJoin({
       orgs: this.orgsSvc.list({ page: 1, limit: 5 }),
-      events: this.eventsSvc.list({ page: 1, limit: 5, upcoming: true }),
+      events: this.eventsSvc.list({ page: 1, limit: 5 }),
       anns: this.annsSvc.list({ page: 1, limit: 5 }),
     }).subscribe({
       next: ({ orgs, events, anns }) => {

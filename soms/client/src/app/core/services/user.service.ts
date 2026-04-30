@@ -6,7 +6,7 @@ import { Paginated, User } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private readonly api = environment.apiUrl + '/api/users';
+  private readonly api = environment.apiUrl + '/users';
 
   constructor(private http: HttpClient) {}
 

@@ -118,7 +118,7 @@ export class EventsComponent implements OnInit {
   orgs = signal<Organization[]>([]);
   loading = signal(false);
   search = signal('');
-  upcoming = signal(true);
+  upcoming = signal(false);
   page = signal(1);
   showForm = signal(false);
   creating = signal(false);

@@ -6,7 +6,7 @@ import { Member, Organization, Paginated } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizationService {
-  private readonly api = environment.apiUrl + '/api/organizations';
+  private readonly api = environment.apiUrl + '/organizations';
 
   constructor(private http: HttpClient) {}
 

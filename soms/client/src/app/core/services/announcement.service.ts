@@ -6,7 +6,7 @@ import { Announcement, Paginated } from '../models';
 
 @Injectable({ providedIn: 'root' })
 export class AnnouncementService {
-  private readonly api = environment.apiUrl + '/api/announcements';
+  private readonly api = environment.apiUrl + '/announcements';
 
   constructor(private http: HttpClient) {}
 
