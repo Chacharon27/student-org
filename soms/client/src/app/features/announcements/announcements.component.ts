@@ -14,7 +14,7 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-5 md:mb-6">
       <div>
         <h1 class="text-2xl font-bold text-white">Announcements</h1>
         <p class="text-sm text-slate-300">Latest updates from your campus.</p>
@@ -24,7 +24,7 @@ import { fileUrl } from '../../core/services/file-url';
       </button>
     </div>
 
-    <div *ngIf="showForm()" class="card p-6 mb-6">
+    <div *ngIf="showForm()" class="card p-4 sm:p-6 mb-6">
       <form [formGroup]="form" (ngSubmit)="create()" class="space-y-4">
         <div>
           <label class="label">Title</label>
@@ -59,8 +59,8 @@ import { fileUrl } from '../../core/services/file-url';
     <div *ngIf="loading()" class="text-sm text-slate-300">Loading...</div>
 
     <ul class="space-y-4">
-      <li *ngFor="let a of data()?.items" class="card p-5">
-        <div class="flex items-start gap-3">
+      <li *ngFor="let a of data()?.items" class="card p-4 sm:p-5">
+        <div class="grid sm:flex items-start gap-3">
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-1">
               <span *ngIf="a.pinned" class="badge bg-amber-100 text-amber-800">Pinned</span>
@@ -75,7 +75,7 @@ import { fileUrl } from '../../core/services/file-url';
       </li>
     </ul>
 
-    <div *ngIf="data()" class="flex items-center justify-between mt-6 text-sm">
+    <div *ngIf="data()" class="grid sm:flex items-center justify-between gap-3 mt-6 text-sm">
       <span class="text-slate-300">Page {{ data()!.page }} of {{ data()!.pages || 1 }}</span>
       <div class="flex gap-2">
         <button class="btn-secondary" [disabled]="data()!.page <= 1" (click)="setPage(data()!.page - 1)">Prev</button>

@@ -18,8 +18,8 @@ import { Paginated, User } from '../../core/models';
       <input class="input" placeholder="Search by name, email, student ID..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
     </div>
 
-    <div class="card overflow-hidden">
-      <table class="w-full text-sm">
+    <div class="card overflow-x-auto">
+      <table class="w-full min-w-[720px] text-sm">
         <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
           <tr>
             <th class="text-left px-4 py-3">Name</th>
@@ -50,7 +50,7 @@ import { Paginated, User } from '../../core/models';
       </table>
     </div>
 
-    <div *ngIf="data()" class="flex items-center justify-between mt-6 text-sm">
+    <div *ngIf="data()" class="grid sm:flex items-center justify-between gap-3 mt-6 text-sm">
       <span class="text-slate-300">Page {{ data()!.page }} of {{ data()!.pages || 1 }} ({{ data()!.total }} users)</span>
       <div class="flex gap-2">
         <button class="btn-secondary" [disabled]="data()!.page <= 1" (click)="setPage(data()!.page - 1)">Prev</button>

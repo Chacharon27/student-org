@@ -16,7 +16,7 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-5 md:mb-6">
       <div>
         <h1 class="text-2xl font-bold text-white">Events</h1>
         <p class="text-sm text-slate-300">Discover what's happening on campus.</p>
@@ -26,8 +26,8 @@ import { fileUrl } from '../../core/services/file-url';
       </button>
     </div>
 
-    <div *ngIf="showForm()" class="card p-6 mb-6">
-      <form [formGroup]="form" (ngSubmit)="create()" class="grid md:grid-cols-2 gap-4">
+    <div *ngIf="showForm()" class="card p-4 sm:p-6 mb-6">
+      <form [formGroup]="form" (ngSubmit)="create()" class="grid md:grid-cols-2 gap-3 sm:gap-4">
         <div class="md:col-span-2">
           <label class="label">Title</label>
           <input class="input" formControlName="title" />
@@ -71,7 +71,7 @@ import { fileUrl } from '../../core/services/file-url';
       </form>
     </div>
 
-    <div class="card p-4 mb-4 flex items-center gap-3">
+    <div class="card p-4 mb-4 grid sm:flex items-center gap-3">
       <input class="input" placeholder="Search events…" [ngModel]="search()" (ngModelChange)="onSearch($event)" />
       <label class="flex items-center gap-2 text-sm text-slate-600 whitespace-nowrap">
         <input type="checkbox" [ngModel]="upcoming()" (ngModelChange)="upcoming.set($event); page.set(1); load()" />
@@ -81,9 +81,9 @@ import { fileUrl } from '../../core/services/file-url';
 
     <div *ngIf="loading()" class="text-sm text-slate-300">Loading...</div>
 
-    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <a *ngFor="let e of data()?.items" [routerLink]="['/events', e._id]" class="card overflow-hidden hover:shadow-md transition">
-        <div class="h-36 bg-brand-100 relative">
+        <div class="h-40 sm:h-36 bg-brand-100 relative">
           <img *ngIf="e.posterUrl" [src]="fileUrl(e.posterUrl)" class="w-full h-full object-cover" alt="" />
           <span class="absolute top-3 left-3 bg-white/90 text-slate-900 text-xs px-2 py-1 rounded-full font-semibold">
             {{ e.startsAt | date:'MMM d, y' }}

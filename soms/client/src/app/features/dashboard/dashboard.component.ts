@@ -15,26 +15,26 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="rounded-[32px] bg-gradient-to-br from-brand-700 via-brand-600 to-accent-400 text-white p-8 md:p-12 shadow-soft mb-8">
+    <section class="rounded-2xl md:rounded-[32px] bg-gradient-to-br from-brand-700 via-brand-600 to-accent-400 text-white p-5 sm:p-8 md:p-12 shadow-soft mb-6 md:mb-8">
       <p class="text-brand-100 text-sm font-medium uppercase tracking-wider">
         {{ auth.user ? 'Welcome back, ' + auth.user.name : 'Welcome' }}
       </p>
-      <h1 class="text-3xl md:text-4xl font-extrabold mt-2">
+      <h1 class="text-3xl md:text-4xl font-extrabold mt-2 leading-tight">
         Your campus, your community.
       </h1>
       <p class="mt-3 text-brand-100 max-w-xl">
         Manage organizations, discover events, and stay informed with announcements — all in one place.
       </p>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <a routerLink="/organizations" class="btn-primary">Browse organizations</a>
-        <a routerLink="/events" class="btn-secondary">View events</a>
+      <div class="mt-6 grid sm:flex gap-3">
+        <a routerLink="/organizations" class="btn-primary text-center">Browse organizations</a>
+        <a routerLink="/events" class="btn-secondary text-center">View events</a>
       </div>
     </section>
 
-    <div class="grid lg:grid-cols-3 gap-6">
+    <div class="grid lg:grid-cols-3 gap-4 md:gap-6">
       <div class="lg:col-span-2 space-y-6">
-        <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
+        <div class="card p-4 sm:p-6">
+          <div class="flex items-center justify-between gap-3 mb-4">
             <h2 class="text-lg font-bold text-slate-900">Upcoming events</h2>
             <a routerLink="/events" class="text-sm font-medium text-brand-700 hover:underline">View all</a>
           </div>
@@ -43,8 +43,8 @@ import { fileUrl } from '../../core/services/file-url';
             No upcoming events.
           </div>
           <ul class="divide-y divide-slate-100">
-            <li *ngFor="let e of events()" class="py-3 flex gap-4 items-start">
-              <div class="w-14 h-14 rounded-lg bg-brand-100 text-brand-700 grid place-items-center shrink-0 overflow-hidden">
+            <li *ngFor="let e of events()" class="py-3 flex gap-3 sm:gap-4 items-start">
+              <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-brand-100 text-brand-700 grid place-items-center shrink-0 overflow-hidden">
                 <img *ngIf="e.posterUrl; else dateTpl" [src]="fileUrl(e.posterUrl)" alt="" class="w-full h-full object-cover" />
                 <ng-template #dateTpl>
                   <div class="text-center leading-none">
@@ -61,8 +61,8 @@ import { fileUrl } from '../../core/services/file-url';
           </ul>
         </div>
 
-        <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
+        <div class="card p-4 sm:p-6">
+          <div class="flex items-center justify-between gap-3 mb-4">
             <h2 class="text-lg font-bold text-slate-900">Latest announcements</h2>
             <a routerLink="/announcements" class="text-sm font-medium text-brand-700 hover:underline">View all</a>
           </div>
@@ -83,7 +83,7 @@ import { fileUrl } from '../../core/services/file-url';
       </div>
 
       <div class="space-y-6">
-        <div class="card p-6">
+        <div class="card p-4 sm:p-6">
           <h2 class="text-lg font-bold text-slate-900 mb-4">Featured organizations</h2>
           <ul class="space-y-3">
             <li *ngFor="let o of orgs()">
