@@ -9,7 +9,7 @@ const USER_KEY = 'soms_user';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private readonly api = environment.apiUrl + '/api/auth';
+  private readonly api = environment.apiUrl + '/auth';
   private readonly _user = signal<User | null>(this.loadUser());
   readonly user$ = this._user.asReadonly();
   readonly isAuthSig = computed(() => this._user() !== null);
