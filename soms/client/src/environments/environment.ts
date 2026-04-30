@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://YOUR-DEPLOYED-API.onrender.com',
+  apiUrl: 'https://student-org-svv5.onrender.com',
 };

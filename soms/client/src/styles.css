@@ -2,29 +2,41 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply min-h-screen bg-slate-950 text-slate-100 antialiased;
+    background-image: radial-gradient(circle at top left, rgba(197, 85, 163, 0.18), transparent 20%),
+      radial-gradient(circle at bottom right, rgba(255, 112, 191, 0.12), transparent 18%);
+  }
+}
+
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-700 shadow-sm;
+    @apply btn bg-gradient-to-r from-brand-600 via-brand-500 to-accent-400 text-white shadow-soft hover:from-brand-700 hover:via-brand-600 hover:to-accent-500;
   }
   .btn-secondary {
-    @apply btn bg-white border border-slate-300 text-slate-700 hover:bg-slate-50;
+    @apply btn bg-white border border-slate-200 text-slate-900 shadow-sm hover:bg-slate-50;
   }
   .btn-danger {
     @apply btn bg-red-600 text-white hover:bg-red-700;
   }
   .input {
-    @apply w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200;
+    @apply w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-3 text-sm text-slate-900 shadow-sm transition focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200;
   }
   .label {
-    @apply block text-sm font-medium text-slate-700 mb-1;
+    @apply block text-sm font-semibold text-slate-700 mb-2;
   }
   .card {
-    @apply bg-white rounded-xl shadow-sm border border-slate-200;
+    @apply bg-white rounded-[28px] border border-slate-200 shadow-soft;
   }
   .badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold;
   }
 }

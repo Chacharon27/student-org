@@ -15,7 +15,7 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <section class="rounded-2xl bg-gradient-to-br from-brand-700 to-brand-500 text-white p-8 md:p-12 shadow-lg mb-8">
+    <section class="rounded-[32px] bg-gradient-to-br from-brand-700 via-brand-600 to-accent-400 text-white p-8 md:p-12 shadow-soft mb-8">
       <p class="text-brand-100 text-sm font-medium uppercase tracking-wider">
         {{ auth.user ? 'Welcome back, ' + auth.user.name : 'Welcome' }}
       </p>
@@ -25,9 +25,9 @@ import { fileUrl } from '../../core/services/file-url';
       <p class="mt-3 text-brand-100 max-w-xl">
         Manage organizations, discover events, and stay informed with announcements — all in one place.
       </p>
-      <div class="mt-6 flex gap-3">
-        <a routerLink="/organizations" class="bg-white text-brand-700 hover:bg-brand-50 btn">Browse organizations</a>
-        <a routerLink="/events" class="border border-white/40 text-white hover:bg-white/10 btn">View events</a>
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a routerLink="/organizations" class="btn-primary">Browse organizations</a>
+        <a routerLink="/events" class="btn-secondary">View events</a>
       </div>
     </section>
 

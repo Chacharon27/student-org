@@ -56,7 +56,7 @@ import { fileUrl } from '../../core/services/file-url';
             <input class="input" formControlName="course" />
           </div>
           <div class="sm:col-span-2 flex justify-end">
-            <button class="btn-primary" [disabled]="saving">{{ saving ? 'Saving…' : 'Save changes' }}</button>
+            <button class="btn-primary" [disabled]="saving">{{ saving ? 'Saving...' : 'Save changes' }}</button>
           </div>
         </form>
       </div>
@@ -68,13 +68,13 @@ import { fileUrl } from '../../core/services/file-url';
           <li *ngFor="let r of regs()" class="py-3 flex items-center gap-4">
             <div class="w-12 h-12 rounded-lg bg-brand-100 text-brand-700 grid place-items-center text-center leading-none shrink-0">
               <div>
-                <div class="text-xs">{{ r.event?.startsAt | date:'MMM' }}</div>
-                <div class="font-bold">{{ r.event?.startsAt | date:'d' }}</div>
+                <div class="text-xs">{{ r.event.startsAt | date:'MMM' }}</div>
+                <div class="font-bold">{{ r.event.startsAt | date:'d' }}</div>
               </div>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="font-semibold text-slate-900 truncate">{{ r.event?.title }}</p>
-              <p class="text-xs text-slate-500">{{ r.event?.location }} • {{ r.event?.startsAt | date:'medium' }}</p>
+              <p class="font-semibold text-slate-900 truncate">{{ r.event.title }}</p>
+              <p class="text-xs text-slate-500">{{ r.event.location }} - {{ r.event.startsAt | date:'medium' }}</p>
             </div>
             <span class="badge"
                   [class.bg-green-100]="r.status==='registered'" [class.text-green-700]="r.status==='registered'"

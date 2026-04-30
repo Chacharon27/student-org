@@ -56,6 +56,7 @@ export interface Announcement {
   body: string;
   organization?: Organization | string | null;
   createdBy: User | string;
+  imageUrl?: string;
   pinned: boolean;
   createdAt: string;
 }

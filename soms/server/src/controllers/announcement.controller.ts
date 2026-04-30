@@ -26,7 +26,12 @@ export async function listAnnouncements(req: Request, res: Response, next: NextF
 
 export async function createAnnouncement(req: Request, res: Response, next: NextFunction) {
   try {
-    const a = await Announcement.create({ ...req.body, createdBy: req.user!.id });
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const a = await Announcement.create({
+      ...req.body,
+      imageUrl,
+      createdBy: req.user!.id,
+    });
     res.status(201).json(a);
   } catch (err) {
     next(err);
@@ -35,7 +40,9 @@ export async function createAnnouncement(req: Request, res: Response, next: Next
 
 export async function updateAnnouncement(req: Request, res: Response, next: NextFunction) {
   try {
-    const a = await Announcement.findByIdAndUpdate(req.params.id, req.body, {
+    const update: any = { ...req.body };
+    if (req.file) update.imageUrl = `/uploads/${req.file.filename}`;
+    const a = await Announcement.findByIdAndUpdate(req.params.id, update, {
       new: true,
     });
     if (!a) throw new HttpError(404, 'Announcement not found');

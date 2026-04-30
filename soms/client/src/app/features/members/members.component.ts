@@ -11,11 +11,11 @@ import { Paginated, User } from '../../core/models';
   imports: [CommonModule, FormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1 class="text-2xl font-bold text-slate-900 mb-2">All users</h1>
-    <p class="text-sm text-slate-500 mb-6">Admin view of all registered users.</p>
+    <h1 class="text-2xl font-bold text-white mb-2">All users</h1>
+    <p class="text-sm text-slate-300 mb-6">Admin view of all registered users.</p>
 
     <div class="card p-4 mb-4">
-      <input class="input" placeholder="Search by name, email, student ID…" [ngModel]="search()" (ngModelChange)="onSearch($event)" />
+      <input class="input" placeholder="Search by name, email, student ID..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
     </div>
 
     <div class="card overflow-hidden">
@@ -33,8 +33,8 @@ import { Paginated, User } from '../../core/models';
           <tr *ngFor="let u of data()?.items" class="hover:bg-slate-50">
             <td class="px-4 py-3 font-semibold text-slate-900">{{ u.name }}</td>
             <td class="px-4 py-3 text-slate-600">{{ u.email }}</td>
-            <td class="px-4 py-3">{{ u.studentId || '—' }}</td>
-            <td class="px-4 py-3">{{ u.course || '—' }}</td>
+            <td class="px-4 py-3">{{ u.studentId || '-' }}</td>
+            <td class="px-4 py-3">{{ u.course || '-' }}</td>
             <td class="px-4 py-3">
               <span class="badge"
                     [class.bg-brand-100]="u.role==='admin'" [class.text-brand-700]="u.role==='admin'"
@@ -51,7 +51,7 @@ import { Paginated, User } from '../../core/models';
     </div>
 
     <div *ngIf="data()" class="flex items-center justify-between mt-6 text-sm">
-      <span class="text-slate-500">Page {{ data()!.page }} of {{ data()!.pages || 1 }} ({{ data()!.total }} users)</span>
+      <span class="text-slate-300">Page {{ data()!.page }} of {{ data()!.pages || 1 }} ({{ data()!.total }} users)</span>
       <div class="flex gap-2">
         <button class="btn-secondary" [disabled]="data()!.page <= 1" (click)="setPage(data()!.page - 1)">Prev</button>
         <button class="btn-secondary" [disabled]="data()!.page >= data()!.pages" (click)="setPage(data()!.page + 1)">Next</button>

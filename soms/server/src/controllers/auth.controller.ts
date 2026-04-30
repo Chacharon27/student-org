@@ -5,10 +5,10 @@ import { HttpError } from '../middleware/error';
 
 export async function register(req: Request, res: Response, next: NextFunction) {
   try {
-    const { email } = req.body;
+    const { name, email, password, studentId, course, yearLevel } = req.body;
     const exists = await User.findOne({ email });
     if (exists) throw new HttpError(409, 'Email already registered');
-    const user = await User.create(req.body);
+    const user = await User.create({ name, email, password, studentId, course, yearLevel });
     const token = signToken({ id: user.id, role: user.role, email: user.email });
     res.status(201).json({ token, user });
   } catch (err) {

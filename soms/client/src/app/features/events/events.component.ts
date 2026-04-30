@@ -18,8 +18,8 @@ import { fileUrl } from '../../core/services/file-url';
   template: `
     <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Events</h1>
-        <p class="text-sm text-slate-500">Discover what's happening on campus.</p>
+        <h1 class="text-2xl font-bold text-white">Events</h1>
+        <p class="text-sm text-slate-300">Discover what's happening on campus.</p>
       </div>
       <button *ngIf="auth.user?.role === 'admin'" class="btn-primary" (click)="showForm.set(!showForm())">
         {{ showForm() ? 'Close form' : '+ New event' }}
@@ -64,8 +64,8 @@ import { fileUrl } from '../../core/services/file-url';
           <input type="file" accept="image/*" (change)="onFile($event)" class="text-sm" />
         </div>
         <div class="md:col-span-2 flex justify-end">
-          <button class="btn-primary" [disabled]="form.invalid || creating">
-            {{ creating ? 'Saving…' : 'Create event' }}
+          <button class="btn-primary" [disabled]="form.invalid || creating()">
+            {{ creating() ? 'Saving...' : 'Create event' }}
           </button>
         </div>
       </form>
@@ -79,7 +79,7 @@ import { fileUrl } from '../../core/services/file-url';
       </label>
     </div>
 
-    <div *ngIf="loading()" class="text-sm text-slate-500">Loading…</div>
+    <div *ngIf="loading()" class="text-sm text-slate-300">Loading...</div>
 
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
       <a *ngFor="let e of data()?.items" [routerLink]="['/events', e._id]" class="card overflow-hidden hover:shadow-md transition">
@@ -98,7 +98,7 @@ import { fileUrl } from '../../core/services/file-url';
     </div>
 
     <div *ngIf="data()" class="flex items-center justify-between mt-6 text-sm">
-      <span class="text-slate-500">Page {{ data()!.page }} of {{ data()!.pages || 1 }} ({{ data()!.total }} total)</span>
+      <span class="text-slate-300">Page {{ data()!.page }} of {{ data()!.pages || 1 }} ({{ data()!.total }} total)</span>
       <div class="flex gap-2">
         <button class="btn-secondary" [disabled]="data()!.page <= 1" (click)="setPage(data()!.page - 1)">Prev</button>
         <button class="btn-secondary" [disabled]="data()!.page >= data()!.pages" (click)="setPage(data()!.page + 1)">Next</button>
@@ -121,7 +121,7 @@ export class EventsComponent implements OnInit {
   upcoming = signal(true);
   page = signal(1);
   showForm = signal(false);
-  creating = false;
+  creating = signal(false);
   file: File | null = null;
   private search$ = new Subject<string>();
 
@@ -168,7 +168,7 @@ export class EventsComponent implements OnInit {
 
   create() {
     if (this.form.invalid) return;
-    this.creating = true;
+    this.creating.set(true);
     const fd = new FormData();
     Object.entries(this.form.getRawValue()).forEach(([k, v]) =>
       fd.append(k, String(v)),
@@ -182,8 +182,8 @@ export class EventsComponent implements OnInit {
         this.showForm.set(false);
         this.load();
       },
-      complete: () => (this.creating = false),
-      error: () => (this.creating = false),
+      complete: () => this.creating.set(false),
+      error: () => this.creating.set(false),
     });
   }
 }

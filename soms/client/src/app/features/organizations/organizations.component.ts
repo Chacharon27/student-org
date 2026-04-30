@@ -16,47 +16,47 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-5">
       <div>
-        <h1 class="text-2xl font-bold text-slate-900">Organizations</h1>
-        <p class="text-sm text-slate-500">Discover and join student organizations on campus.</p>
+        <h1 class="text-2xl font-bold text-white">Organizations</h1>
+        <p class="text-sm text-slate-300">Discover and join student organizations on campus.</p>
       </div>
       <button *ngIf="auth.user?.role === 'admin'" class="btn-primary" (click)="showForm.set(!showForm())">
         {{ showForm() ? 'Close form' : '+ New organization' }}
       </button>
     </div>
 
-    <div *ngIf="showForm()" class="card p-6 mb-6">
-      <form [formGroup]="form" (ngSubmit)="create()" class="grid md:grid-cols-2 gap-4">
+    <div *ngIf="showForm()" class="card p-5 mb-5">
+      <form [formGroup]="form" (ngSubmit)="create()" class="grid md:grid-cols-2 gap-3">
         <div>
           <label class="label">Name</label>
           <input class="input" formControlName="name" />
         </div>
         <div>
           <label class="label">Category</label>
-          <input class="input" formControlName="category" placeholder="Academic, Cultural…" />
+          <input class="input" formControlName="category" placeholder="Academic, Cultural..." />
         </div>
         <div class="md:col-span-2">
           <label class="label">Description</label>
-          <textarea class="input min-h-[90px]" formControlName="description"></textarea>
+          <textarea class="input min-h-[72px]" rows="3" formControlName="description"></textarea>
         </div>
-        <div class="md:col-span-2">
+        <div>
           <label class="label">Logo (optional)</label>
-          <input type="file" accept="image/*" (change)="onFile($event)" class="text-sm" />
+          <input type="file" accept="image/*" (change)="onFile($event)" class="text-sm text-slate-700 file:mr-3 file:rounded-lg file:border file:border-slate-300 file:bg-white file:px-3 file:py-2 file:text-sm file:font-semibold file:text-slate-900" />
         </div>
-        <div class="md:col-span-2 flex justify-end">
-          <button class="btn-primary" [disabled]="form.invalid || creating">
-            {{ creating ? 'Saving…' : 'Create' }}
+        <div class="flex items-end justify-end">
+          <button class="btn-primary" [disabled]="form.invalid || creating()">
+            {{ creating() ? 'Saving...' : 'Create' }}
           </button>
         </div>
       </form>
     </div>
 
     <div class="card p-4 mb-4 flex items-center gap-3">
-      <input class="input" placeholder="Search organizations…" [ngModel]="search()" (ngModelChange)="onSearch($event)" />
+      <input class="input" placeholder="Search organizations..." [ngModel]="search()" (ngModelChange)="onSearch($event)" />
     </div>
 
-    <div *ngIf="loading()" class="text-sm text-slate-500">Loading…</div>
+    <div *ngIf="loading()" class="text-sm text-slate-300">Loading...</div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
       <a *ngFor="let o of data()?.items" [routerLink]="['/organizations', o._id]"
@@ -76,7 +76,7 @@ import { fileUrl } from '../../core/services/file-url';
     </div>
 
     <div *ngIf="data()" class="flex items-center justify-between mt-6 text-sm">
-      <span class="text-slate-500">Page {{ data()!.page }} of {{ data()!.pages || 1 }} ({{ data()!.total }} total)</span>
+      <span class="text-slate-300">Page {{ data()!.page }} of {{ data()!.pages || 1 }} ({{ data()!.total }} total)</span>
       <div class="flex gap-2">
         <button class="btn-secondary" [disabled]="data()!.page <= 1" (click)="setPage(data()!.page - 1)">Prev</button>
         <button class="btn-secondary" [disabled]="data()!.page >= data()!.pages" (click)="setPage(data()!.page + 1)">Next</button>
@@ -96,7 +96,7 @@ export class OrganizationsComponent implements OnInit {
   search = signal('');
   page = signal(1);
   showForm = signal(false);
-  creating = false;
+  creating = signal(false);
   file: File | null = null;
   private search$ = new Subject<string>();
 
@@ -142,7 +142,7 @@ export class OrganizationsComponent implements OnInit {
 
   create() {
     if (this.form.invalid) return;
-    this.creating = true;
+    this.creating.set(true);
     const fd = new FormData();
     Object.entries(this.form.getRawValue()).forEach(([k, v]) =>
       fd.append(k, String(v)),
@@ -156,8 +156,8 @@ export class OrganizationsComponent implements OnInit {
         this.showForm.set(false);
         this.load();
       },
-      complete: () => (this.creating = false),
-      error: () => (this.creating = false),
+      complete: () => this.creating.set(false),
+      error: () => this.creating.set(false),
     });
   }
 }

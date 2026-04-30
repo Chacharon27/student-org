@@ -23,11 +23,11 @@ export class AnnouncementService {
     return this.http.get<Paginated<Announcement>>(this.api, { params });
   }
 
-  create(body: Partial<Announcement>): Observable<Announcement> {
+  create(body: Partial<Announcement> | FormData): Observable<Announcement> {
     return this.http.post<Announcement>(this.api, body);
   }
 
-  update(id: string, body: Partial<Announcement>): Observable<Announcement> {
+  update(id: string, body: Partial<Announcement> | FormData): Observable<Announcement> {
     return this.http.put<Announcement>(`${this.api}/${id}`, body);
   }
 

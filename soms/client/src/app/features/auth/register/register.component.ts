@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
+import { signal } from '@angular/core';
 import { AuthService } from '../../../core/services/auth.service';
 import { ToastService } from '../../../core/services/toast.service';
 
@@ -11,14 +12,14 @@ import { ToastService } from '../../../core/services/toast.service';
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen grid place-items-center bg-gradient-to-br from-brand-50 via-white to-slate-100 p-4">
+    <div class="min-h-screen grid place-items-center bg-slate-950 p-4">
       <div class="w-full max-w-lg card p-8">
-        <a routerLink="/" class="flex items-center gap-2 font-extrabold text-brand-700 mb-6">
-          <span class="w-9 h-9 rounded-lg bg-brand-600 text-white grid place-items-center">S</span>
-          <span>SOMS</span>
+        <a routerLink="/" class="flex items-center gap-3 font-extrabold text-brand-700 mb-6">
+          <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-600 to-accent-400 text-white grid place-items-center shadow-lg">S</span>
+          <span class="text-lg tracking-[0.16em]">SOMS</span>
         </a>
-        <h1 class="text-2xl font-bold text-slate-900">Create your account</h1>
-        <p class="text-sm text-slate-500 mt-1">Join organizations and register for events.</p>
+        <h1 class="text-2xl font-bold text-slate-900">Create your student account</h1>
+        <p class="text-sm text-slate-500 mt-1">Admins cannot register here. Student accounts can join organizations and register for events.</p>
 
         <form [formGroup]="form" (ngSubmit)="submit()" class="mt-6 space-y-4">
           <div>
@@ -50,8 +51,8 @@ import { ToastService } from '../../../core/services/toast.service';
               <input class="input" type="number" min="1" max="6" formControlName="yearLevel" />
             </div>
           </div>
-          <button class="btn-primary w-full" [disabled]="form.invalid || loading">
-            {{ loading ? 'Creating…' : 'Create account' }}
+          <button class="btn-primary w-full" [disabled]="form.invalid || loading()">
+            {{ loading() ? 'Creating…' : 'Create account' }}
           </button>
         </form>
 
@@ -68,7 +69,7 @@ export class RegisterComponent {
   private router = inject(Router);
   private toast = inject(ToastService);
 
-  loading = false;
+  loading = signal(false);
   form = this.fb.nonNullable.group({
     name: ['', [Validators.required, Validators.minLength(2)]],
     email: ['', [Validators.required, Validators.email]],
@@ -80,14 +81,14 @@ export class RegisterComponent {
 
   submit() {
     if (this.form.invalid) return;
-    this.loading = true;
+    this.loading.set(true);
     this.auth.register(this.form.getRawValue()).subscribe({
       next: () => {
         this.toast.success('Account created!');
         this.router.navigateByUrl('/');
       },
-      error: () => (this.loading = false),
-      complete: () => (this.loading = false),
+      error: () => this.loading.set(false),
+      complete: () => this.loading.set(false),
     });
   }
 }

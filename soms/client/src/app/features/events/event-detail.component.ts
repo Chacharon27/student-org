@@ -13,9 +13,9 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a routerLink="/events" class="text-sm text-brand-700 hover:underline">← Back to events</a>
+    <a routerLink="/events" class="text-sm text-brand-100 hover:text-white hover:underline">&larr; Back to events</a>
 
-    <div *ngIf="loading()" class="mt-6 text-sm text-slate-500">Loading…</div>
+    <div *ngIf="loading()" class="mt-6 text-sm text-slate-300">Loading...</div>
 
     <ng-container *ngIf="event() as e">
       <div class="card overflow-hidden mt-4">
@@ -44,8 +44,8 @@ import { fileUrl } from '../../core/services/file-url';
           </div>
           <p class="mt-6 text-slate-700 whitespace-pre-line">{{ e.description }}</p>
           <div class="mt-6 flex gap-3">
-            <button *ngIf="auth.user" class="btn-primary" [disabled]="acting" (click)="register(e._id)">Register</button>
-            <button *ngIf="auth.user" class="btn-secondary" [disabled]="acting" (click)="cancel(e._id)">Cancel registration</button>
+            <button *ngIf="auth.user" class="btn-primary" [disabled]="acting()" (click)="register(e._id)">Register</button>
+            <button *ngIf="auth.user" class="btn-secondary" [disabled]="acting()" (click)="cancel(e._id)">Cancel registration</button>
             <button *ngIf="auth.user?.role === 'admin'" class="btn-danger ml-auto" (click)="remove(e._id)">Delete event</button>
           </div>
           <p *ngIf="!auth.user" class="text-sm text-slate-500 mt-4">
@@ -66,7 +66,7 @@ export class EventDetailComponent implements OnInit {
 
   event = signal<EventItem | null>(null);
   loading = signal(true);
-  acting = false;
+  acting = signal(false);
 
   ngOnInit() { this.load(); }
 
@@ -83,20 +83,20 @@ export class EventDetailComponent implements OnInit {
   }
 
   register(eid: string) {
-    this.acting = true;
+    this.acting.set(true);
     this.svc.registerForEvent(eid).subscribe({
       next: () => { this.toast.success('Registered!'); this.load(); },
-      complete: () => (this.acting = false),
-      error: () => (this.acting = false),
+      complete: () => this.acting.set(false),
+      error: () => this.acting.set(false),
     });
   }
 
   cancel(eid: string) {
-    this.acting = true;
+    this.acting.set(true);
     this.svc.cancel(eid).subscribe({
       next: () => { this.toast.success('Registration cancelled'); this.load(); },
-      complete: () => (this.acting = false),
-      error: () => (this.acting = false),
+      complete: () => this.acting.set(false),
+      error: () => this.acting.set(false),
     });
   }
 

@@ -6,6 +6,7 @@ export interface IAnnouncement extends Document {
   body: string;
   organization?: Types.ObjectId | null;
   createdBy: Types.ObjectId;
+  imageUrl?: string;
   pinned: boolean;
 }
 
@@ -19,6 +20,7 @@ const announcementSchema = new Schema<IAnnouncement>(
       default: null,
     },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    imageUrl: { type: String },
     pinned: { type: Boolean, default: false },
   },
   { timestamps: true },

@@ -13,9 +13,9 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <a routerLink="/organizations" class="text-sm text-brand-700 hover:underline">← Back to organizations</a>
+    <a routerLink="/organizations" class="text-sm text-brand-100 hover:text-white hover:underline">&larr; Back to organizations</a>
 
-    <div *ngIf="loading()" class="mt-6 text-sm text-slate-500">Loading…</div>
+    <div *ngIf="loading()" class="mt-6 text-sm text-slate-300">Loading...</div>
 
     <ng-container *ngIf="org() as o">
       <div class="card overflow-hidden mt-4">
@@ -33,8 +33,8 @@ import { fileUrl } from '../../core/services/file-url';
             <p class="mt-3 text-slate-600">{{ o.description }}</p>
           </div>
           <div class="flex flex-col gap-2 items-end">
-            <button *ngIf="auth.user && auth.user.role === 'student'" class="btn-primary" [disabled]="joining" (click)="join(o._id)">
-              {{ joining ? 'Joining…' : 'Request to join' }}
+            <button *ngIf="auth.user && auth.user.role === 'student'" class="btn-primary" [disabled]="joining()" (click)="join(o._id)">
+              {{ joining() ? 'Joining...' : 'Request to join' }}
             </button>
             <button *ngIf="auth.user?.role === 'admin'" class="btn-danger" (click)="remove(o._id)">Delete</button>
           </div>
@@ -80,7 +80,7 @@ export class OrganizationDetailComponent implements OnInit {
   org = signal<Organization | null>(null);
   members = signal<Member[]>([]);
   loading = signal(true);
-  joining = false;
+  joining = signal(false);
 
   ngOnInit() { this.load(); }
 
@@ -93,11 +93,11 @@ export class OrganizationDetailComponent implements OnInit {
   }
 
   join(orgId: string) {
-    this.joining = true;
+    this.joining.set(true);
     this.svc.join(orgId).subscribe({
       next: () => { this.toast.success('Membership requested!'); this.load(); },
-      complete: () => (this.joining = false),
-      error: () => (this.joining = false),
+      complete: () => this.joining.set(false),
+      error: () => this.joining.set(false),
     });
   }
 

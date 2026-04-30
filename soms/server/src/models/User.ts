@@ -48,8 +48,8 @@ userSchema.methods.comparePassword = function (plain: string) {
 
 userSchema.set('toJSON', {
   transform: (_doc, ret) => {
-    delete ret.password;
-    return ret;
+    const { password, ...rest } = ret as { password?: string };
+    return rest;
   },
 });
 

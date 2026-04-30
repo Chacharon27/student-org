@@ -4,7 +4,6 @@ export const registerSchema = z.object({
   name: z.string().min(2).max(100),
   email: z.string().email().max(160),
   password: z.string().min(8).max(72),
-  role: z.enum(['admin', 'student']).optional(),
   studentId: z.string().max(40).optional(),
   course: z.string().max(80).optional(),
   yearLevel: z.coerce.number().int().min(1).max(6).optional(),
