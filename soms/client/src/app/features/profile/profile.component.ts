@@ -14,7 +14,7 @@ import { fileUrl } from '../../core/services/file-url';
   imports: [CommonModule, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h1 class="text-2xl font-bold text-slate-900 mb-6">My profile</h1>
+<h1 class="text-2xl font-bold text-slate-900 mb-6">MY PROFILE</h1>
 
     <div class="grid lg:grid-cols-3 gap-6">
       <div class="card p-6 lg:col-span-1">

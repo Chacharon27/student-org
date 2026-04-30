@@ -15,8 +15,8 @@ import { ToastService } from '../../../core/services/toast.service';
     <div class="min-h-screen grid place-items-center bg-slate-950 p-4">
       <div class="w-full max-w-md card p-8">
         <a routerLink="/" class="flex items-center gap-3 font-extrabold text-brand-700 mb-6">
-          <span class="w-11 h-11 rounded-2xl bg-gradient-to-br from-brand-600 to-accent-400 text-white grid place-items-center shadow-lg">S</span>
-          <span class="text-lg tracking-[0.16em]">SOMS</span>
+          <img src="student-org-logo.svg" alt="Student Organization Management System" class="w-11 h-11 rounded-2xl object-cover shadow-lg" />
+          <span class="text-lg tracking-[0.16em]">Student Organization Management System</span>
         </a>
         <h1 class="text-2xl font-bold text-slate-900">Welcome back</h1>
         <p class="text-sm text-slate-500 mt-1">Sign in to manage your student organization workflow.</p>
