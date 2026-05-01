@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { Announcement } from '../models/Announcement';
 import { HttpError } from '../middleware/error';
+import { uploadedFileDataUrl } from '../middleware/upload';
 
 export async function listAnnouncements(req: Request, res: Response, next: NextFunction) {
   try {
@@ -26,7 +27,7 @@ export async function listAnnouncements(req: Request, res: Response, next: NextF
 
 export async function createAnnouncement(req: Request, res: Response, next: NextFunction) {
   try {
-    const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const imageUrl = req.file ? uploadedFileDataUrl(req.file) : undefined;
     const a = await Announcement.create({
       ...req.body,
       imageUrl,
@@ -41,7 +42,7 @@ export async function createAnnouncement(req: Request, res: Response, next: Next
 export async function updateAnnouncement(req: Request, res: Response, next: NextFunction) {
   try {
     const update: any = { ...req.body };
-    if (req.file) update.imageUrl = `/uploads/${req.file.filename}`;
+    if (req.file) update.imageUrl = uploadedFileDataUrl(req.file);
     const a = await Announcement.findByIdAndUpdate(req.params.id, update, {
       new: true,
     });

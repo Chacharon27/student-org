@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { Event } from '../models/Event';
 import { Registration } from '../models/Registration';
 import { HttpError } from '../middleware/error';
+import { uploadedFileDataUrl } from '../middleware/upload';
 
 export async function listEvents(req: Request, res: Response, next: NextFunction) {
   try {
@@ -44,7 +45,7 @@ export async function getEvent(req: Request, res: Response, next: NextFunction) 
 
 export async function createEvent(req: Request, res: Response, next: NextFunction) {
   try {
-    const posterUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const posterUrl = req.file ? uploadedFileDataUrl(req.file) : undefined;
     const ev = await Event.create({
       ...req.body,
       posterUrl,
@@ -59,7 +60,7 @@ export async function createEvent(req: Request, res: Response, next: NextFunctio
 export async function updateEvent(req: Request, res: Response, next: NextFunction) {
   try {
     const update: any = { ...req.body };
-    if (req.file) update.posterUrl = `/uploads/${req.file.filename}`;
+    if (req.file) update.posterUrl = uploadedFileDataUrl(req.file);
     const ev = await Event.findByIdAndUpdate(req.params.id, update, { new: true });
     if (!ev) throw new HttpError(404, 'Event not found');
     res.json(ev);

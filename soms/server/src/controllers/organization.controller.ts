@@ -3,6 +3,7 @@ import { Organization } from '../models/Organization';
 import { Member } from '../models/Member';
 import { HttpError } from '../middleware/error';
 import { slugify } from '../utils/slug';
+import { uploadedFileDataUrl } from '../middleware/upload';
 
 export async function listOrgs(req: Request, res: Response, next: NextFunction) {
   try {
@@ -48,7 +49,7 @@ export async function createOrg(req: Request, res: Response, next: NextFunction)
     let slug = slugBase;
     let i = 1;
     while (await Organization.exists({ slug })) slug = `${slugBase}-${++i}`;
-    const logoUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    const logoUrl = req.file ? uploadedFileDataUrl(req.file) : undefined;
     const org = await Organization.create({
       ...req.body,
       slug,
@@ -64,7 +65,7 @@ export async function createOrg(req: Request, res: Response, next: NextFunction)
 export async function updateOrg(req: Request, res: Response, next: NextFunction) {
   try {
     const update: any = { ...req.body };
-    if (req.file) update.logoUrl = `/uploads/${req.file.filename}`;
+    if (req.file) update.logoUrl = uploadedFileDataUrl(req.file);
     const org = await Organization.findByIdAndUpdate(req.params.id, update, {
       new: true,
     });

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { User } from '../models/User';
 import { HttpError } from '../middleware/error';
+import { uploadedFileDataUrl } from '../middleware/upload';
 
 export async function listUsers(req: Request, res: Response, next: NextFunction) {
   try {
@@ -49,7 +50,7 @@ export async function updateMe(req: Request, res: Response, next: NextFunction) 
 export async function uploadAvatar(req: Request, res: Response, next: NextFunction) {
   try {
     if (!req.file) throw new HttpError(400, 'No file uploaded');
-    const url = `/uploads/${req.file.filename}`;
+    const url = uploadedFileDataUrl(req.file);
     const user = await User.findByIdAndUpdate(
       req.user!.id,
       { avatarUrl: url },
