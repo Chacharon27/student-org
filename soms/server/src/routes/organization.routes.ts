@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authRequired, requireRole } from '../middleware/auth';
-import { upload } from '../middleware/upload';
+import { uploadSingle } from '../middleware/upload';
 import { validate } from '../middleware/validate';
 import { orgSchema } from '../validators/schemas';
 import {
@@ -27,7 +27,7 @@ router.post(
   '/',
   authRequired,
   requireRole('admin'),
-  upload.single('logo'),
+  uploadSingle('logo'),
   validate(orgSchema),
   createOrg,
 );
@@ -35,7 +35,7 @@ router.put(
   '/:id',
   authRequired,
   requireRole('admin'),
-  upload.single('logo'),
+  uploadSingle('logo'),
   updateOrg,
 );
 router.delete('/:id', authRequired, requireRole('admin'), deleteOrg);

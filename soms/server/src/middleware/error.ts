@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import multer from 'multer';
 import { ZodError } from 'zod';
 
 export class HttpError extends Error {
@@ -28,6 +29,9 @@ export function errorHandler(
   }
   if (err instanceof HttpError) {
     return res.status(err.status).json({ message: err.message });
+  }
+  if (err instanceof multer.MulterError) {
+    return res.status(400).json({ message: err.message });
   }
   // eslint-disable-next-line no-console
   console.error(err);

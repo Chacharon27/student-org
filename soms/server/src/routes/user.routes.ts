@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authRequired, requireRole } from '../middleware/auth';
-import { upload } from '../middleware/upload';
+import { uploadSingle } from '../middleware/upload';
 import {
   deleteUser,
   getUser,
@@ -30,7 +30,7 @@ const router = Router();
  */
 router.get('/', authRequired, requireRole('admin'), listUsers);
 router.put('/me', authRequired, updateMe);
-router.post('/me/avatar', authRequired, upload.single('file'), uploadAvatar);
+router.post('/me/avatar', authRequired, uploadSingle('file'), uploadAvatar);
 router.get('/:id', authRequired, getUser);
 router.delete('/:id', authRequired, requireRole('admin'), deleteUser);
 
