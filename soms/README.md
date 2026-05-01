@@ -1,6 +1,8 @@
 # Student Organization Management System (SOMS)
 
-A full-stack web application for managing student organizations, members, events, and announcements on campus.
+Student Organization Management System (SOMS) is a full-stack web application for managing campus student organizations, members, events, announcements, and event registrations.
+
+Administrators can create and manage organizations, post events, publish announcements, view users, and manage members. Students can browse organizations, join organizations, view announcements, and register for events.
 
 ## Live Links
 
@@ -14,11 +16,11 @@ A full-stack web application for managing student organizations, members, events
 |---|---|
 | Frontend | Angular 18, Tailwind CSS, RxJS |
 | Backend | Node.js, Express, TypeScript |
-| Database | MongoDB, Mongoose |
-| Auth | JWT, bcryptjs |
+| Database | MongoDB Atlas, Mongoose |
+| Authentication | JWT, bcryptjs |
 | File Upload | Multer |
 | Validation | Zod |
-| API Docs | Swagger |
+| API Documentation | Swagger |
 
 ## Repository Structure
 
@@ -26,8 +28,9 @@ A full-stack web application for managing student organizations, members, events
 soms/
 ├── client/       Angular frontend
 ├── server/       Express API
-├── screenshots/  Project screenshots
-└── README.md
+├── screenshots/  UI and API testing screenshots
+├── render.yaml   Render deployment config
+└── README.md     Project documentation
 ```
 
 ## Local Setup
@@ -40,19 +43,19 @@ npm install
 npm run dev
 ```
 
-Backend runs at:
+Backend local URL:
 
 ```text
 http://localhost:5000
 ```
 
-Swagger docs:
+Backend API docs:
 
 ```text
 http://localhost:5000/api/docs
 ```
 
-Required `server/.env` values:
+Create `server/.env`:
 
 ```env
 PORT=5000
@@ -75,15 +78,25 @@ npm install
 npm start
 ```
 
-Frontend runs at:
+Frontend local URL:
 
 ```text
 http://localhost:4200
 ```
 
+Production API URL is configured in:
+
+```text
+client/src/environments/environment.ts
+```
+
+```ts
+apiUrl: 'https://student-org-1-s1pk.onrender.com/api'
+```
+
 ## API Overview
 
-Base URL:
+Base API URL:
 
 ```text
 /api
@@ -93,110 +106,113 @@ Base URL:
 
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Create student account |
-| POST | `/api/auth/login` | Login |
-| GET | `/api/auth/me` | Current user |
+| POST | `/api/auth/register` | Register student account |
+| POST | `/api/auth/login` | Login and receive JWT token |
+| GET | `/api/auth/me` | Get current logged-in user |
 
 ### Users
 
-| Method | Endpoint | Role |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/users` | admin |
-| GET | `/api/users/:id` | authenticated |
-| PUT | `/api/users/me` | authenticated |
-| POST | `/api/users/me/avatar` | authenticated |
-| DELETE | `/api/users/:id` | admin |
-
-Avatar upload field:
-
-```text
-file
-```
+| GET | `/api/users` | List users, admin only |
+| GET | `/api/users/:id` | Get user by ID |
+| PUT | `/api/users/me` | Update own profile |
+| POST | `/api/users/me/avatar` | Upload avatar using `file` |
+| DELETE | `/api/users/:id` | Delete user, admin only |
 
 ### Organizations
 
-| Method | Endpoint | Role |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/organizations` | public |
-| GET | `/api/organizations/:id` | public |
-| POST | `/api/organizations` | admin |
-| PUT | `/api/organizations/:id` | admin |
-| DELETE | `/api/organizations/:id` | admin |
-
-Logo upload field:
-
-```text
-logo
-```
+| GET | `/api/organizations` | List organizations |
+| GET | `/api/organizations/:id` | Get organization details |
+| POST | `/api/organizations` | Create organization, admin only, upload field `logo` |
+| PUT | `/api/organizations/:id` | Update organization, admin only |
+| DELETE | `/api/organizations/:id` | Delete organization, admin only |
 
 ### Members
 
-| Method | Endpoint | Role |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/organizations/:orgId/members` | public |
-| POST | `/api/organizations/:orgId/join` | authenticated |
-| POST | `/api/organizations/:orgId/members` | admin |
-| PUT | `/api/organizations/:orgId/members/:memberId` | admin |
-| DELETE | `/api/organizations/:orgId/members/:memberId` | admin |
+| GET | `/api/organizations/:orgId/members` | List organization members |
+| POST | `/api/organizations/:orgId/join` | Request to join organization |
+| POST | `/api/organizations/:orgId/members` | Add member, admin only |
+| PUT | `/api/organizations/:orgId/members/:memberId` | Update member, admin only |
+| DELETE | `/api/organizations/:orgId/members/:memberId` | Remove member, admin only |
 
 ### Events
 
-| Method | Endpoint | Role |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/events` | public |
-| GET | `/api/events/:id` | public |
-| POST | `/api/events` | admin |
-| PUT | `/api/events/:id` | admin |
-| DELETE | `/api/events/:id` | admin |
-
-Supported query params:
-
-```text
-page, limit, search, organization, upcoming
-```
-
-Poster upload field:
-
-```text
-poster
-```
+| GET | `/api/events` | List events |
+| GET | `/api/events/:id` | Get event details |
+| POST | `/api/events` | Create event, admin only, upload field `poster` |
+| PUT | `/api/events/:id` | Update event, admin only |
+| DELETE | `/api/events/:id` | Delete event, admin only |
 
 ### Announcements
 
-| Method | Endpoint | Role |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/announcements` | public |
-| POST | `/api/announcements` | admin |
-| PUT | `/api/announcements/:id` | admin |
-| DELETE | `/api/announcements/:id` | admin |
-
-Photo upload field:
-
-```text
-photo
-```
+| GET | `/api/announcements` | List announcements |
+| POST | `/api/announcements` | Create announcement, admin only, upload field `photo` |
+| PUT | `/api/announcements/:id` | Update announcement, admin only |
+| DELETE | `/api/announcements/:id` | Delete announcement, admin only |
 
 ### Registrations
 
-| Method | Endpoint | Role |
+| Method | Endpoint | Description |
 |---|---|---|
-| GET | `/api/registrations/me` | authenticated |
-| POST | `/api/registrations/events/:eventId` | authenticated |
-| DELETE | `/api/registrations/events/:eventId` | authenticated |
-| GET | `/api/registrations/events/:eventId` | admin |
+| GET | `/api/registrations/me` | View own event registrations |
+| POST | `/api/registrations/events/:eventId` | Register for event |
+| DELETE | `/api/registrations/events/:eventId` | Cancel event registration |
+| GET | `/api/registrations/events/:eventId` | View event registrations, admin only |
 
 ## Features
 
-- Admin and student login
-- Role-based access control
-- Organization management
-- Member management
-- Event posting and registration
-- Announcement posting
-- Image uploads for avatars, organizations, events, and announcements
+- User registration and login
+- Admin and student roles
+- JWT authentication and protected routes
+- Admin dashboard
+- Organization creation, viewing, editing, and deletion
+- Organization logo upload
+- Member listing and member management
+- Student organization join request
+- Event creation, viewing, editing, and deletion
+- Event poster upload
+- Student event registration and cancellation
+- Announcement creation, viewing, editing, and deletion
+- Announcement photo upload
+- User profile update
+- Avatar upload
 - Search, filtering, and pagination
-- Responsive Angular UI
+- Responsive UI for desktop and mobile
+- Toast notifications and loading states
+- REST API with validation and error handling
 - Swagger API documentation
+
+## Screenshots
+
+### UI
+
+![Dashboard](screenshots/dashboard.png)
+![Organizations](screenshots/organizations.png)
+![Events](screenshots/events.png)
+![Announcements](screenshots/announcements.png)
+![Members](screenshots/members.png)
+
+### API Testing
+
+![Postman Create Event](screenshots/postman-test.png)
+![Postman Login](screenshots/postman-login.png)
+![Postman Organizations](screenshots/postman-organization.png)
+![Postman Create Organization](screenshots/postman-create-organization.png)
+![Postman Create Event](screenshots/postman-create-event.png)
+![Postman Create Announcement](screenshots/postman-create-announcement.png)
+![Postman Student Register](screenshots/postman-student-register.png)
+![Postman Student Login](screenshots/postman-student-login.png)
+![Postman Join Organization](screenshots/postman-join-organization.png)
+![Postman Register for Event](screenshots/postman-register-for-event.png)
 
 ## Deployment
 
