@@ -1,5 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AuthResponse, User } from '../models';
@@ -14,7 +14,15 @@ export class AuthService {
   readonly user$ = this._user.asReadonly();
   readonly isAuthSig = computed(() => this._user() !== null);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    if (this.token) {
+      this.refreshMe().subscribe({
+        error: (err: HttpErrorResponse) => {
+          if (err.status === 401 || err.status === 404) this.clear();
+        },
+      });
+    }
+  }
 
   get token(): string | null {
     return localStorage.getItem(TOKEN_KEY);
